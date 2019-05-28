@@ -11,7 +11,7 @@ import java.sql.*;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class user {
+public class User {
 	
 	// Variables for the user constructor
 	
@@ -22,7 +22,7 @@ public class user {
 	
 	//Constructor for the user object
 	
-	user (JSONObject request) throws JSONException {
+	User (JSONObject request) throws JSONException {
 		
 		this.userPassword  = request.getString("password");
 		this.userEmail = request.getString("email");
@@ -30,6 +30,7 @@ public class user {
 		this.update = request.getString("update");
 		
 	}
+	
 	// Method to call when the user logs in
 	
 	public static void _userLog (String password,String email,String type,String update) {
@@ -42,6 +43,7 @@ public class user {
 			String url = "jdbc:mysql://LocalHost:3306/dbuser?useSSL=false";
 			String username = "root";
 			String dbPassword = "Carrera-1";
+			boolean userExists;
 			
 			//Establishing the connection
 			
@@ -50,39 +52,40 @@ public class user {
 			System.out.println("Database connected");			
 			
 			//Strings for the SQL statements
-			
-			String checkExistenceSQL = "SELECT CASE WHEN EXISTS ( SELECT *\n" + 
-					"    FROM users WHERE UserID = 20070022) THEN CAST(1 AS BIT ELSE CAST(0 AS BIT) END";
-			
-		    String saveUserSQL = "INSERT INTO users (password, email, type)" +
-		            "VALUES (?, ?, ?)";
-		    
-		    String updateInformationSQL = "";
-		    
+					    
 		    // Statement to see if the user exists
 		    
+			String checkExistenceSQL = "SELECT * FROM users WHERE email = ?";
+
 		    PreparedStatement checkingStatement = conn.prepareStatement(checkExistenceSQL);
 		    
-		    checkingStatement.setString(1, password);
-		    checkingStatement.setString(2, email);
-		    checkingStatement.setString(3, type);
-		    checkingStatement.executeUpdate();
-		    
-		    // Boolean that indicates if the user exists or not
-		    
-		    boolean userExistence;
-		    
-		    //Adding the  variables  to the statement and executing it
+		    checkingStatement.setString(1, email);	
 
-		    if (((type.contains("login")) && (update.contains("yes")))) {
+		    ResultSet resultSet = checkingStatement.executeQuery();
+		    
+		    if(resultSet.next()){
 		    	
-		    	// Statement to add the user's password and email to the database
+	            userExists = true;
+	            
+	        }
+		
+			else {
+				
+			
+	        	userExists = false;
+		    
+			}
+		    		    
+	    	// Statement to update the user's information
+
+		    if (((userExists = true) && (type.contains("login")) && (update.contains("yes")))) {
 		    	
+		    	
+			    String updateInformationSQL = "UPDATE users SET cat = ?,colour = ?, food = ? WHERE email = ?";
+
 		    	PreparedStatement updateStatement = conn.prepareStatement(updateInformationSQL);
-		    	updateStatement.setString(1, password);
-		    	updateStatement.setString(2, email);
-		    	updateStatement.setString(3, type);
-		    	updateStatement.executeUpdate(); 
+		    	
+		    	updateStatement.setString(1, email);
 			    
 			    //Closing the connection
 			    
@@ -92,36 +95,38 @@ public class user {
 		    
 		    // If the user is not in the database and wants to register
 		    
-		    else if (type.contains("save")) {
+		    else if ((userExists = false) && (type.contains("new"))) {
 		    	
 		    	// Statement to add the user's password and email to the database
+		    	
+		    	String saveUserSQL = "INSERT INTO users (password, email, type, update, animal, colour, food)" +
+			            "VALUES (?, ?, ?, ?, ?, ?, ?)";
 		    	
 		    	PreparedStatement saveStatement = conn.prepareStatement(saveUserSQL);
 		    	saveStatement.setString(1, password);
 		    	saveStatement.setString(2, email);
 		    	saveStatement.setString(3, type);
+		    	saveStatement.setString(4, update);
+		    	saveStatement.setString(5, "cat");
+		    	saveStatement.setString(6, "red");
+		    	saveStatement.setString(7, "meat");
+
 		    	saveStatement.executeUpdate(); 
-			    
+		    	
 			    //Closing the connection
 			    
 			    conn.close(); 
 		    }
+		    
 		}
 		
 		catch (Exception e) {
 			
-			System.out.println(e);
+			System.out.println("Error with the method _userLog in the user class");
 			
 		}
 	}
 	
-		private static void _userCheck (String password,String email,String type) {
-			
-			
-		}
-		
-		
-		
 		public static void _print (String user,String password,String type) {
 
 			System.out.format("[%s]\t%s\t%s", user, password, type);
