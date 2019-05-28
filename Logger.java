@@ -13,7 +13,7 @@ import java.sql.DriverManager;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class logger {
+public class Logger {
 	
 		 // Declaration of the variables of the constructor 
 		 public String level;
@@ -23,7 +23,7 @@ public class logger {
 		 
 		// Constructor
 		 
-		logger (JSONObject request) throws JSONException {
+		Logger (JSONObject request) throws JSONException {
 			 
 			//  Adding values to the variables by reading the JSON POST request
 			
@@ -95,8 +95,8 @@ public class logger {
 		
 		public static void debug (String level,String method,String message, String date) {
 			
-			logger._print(level, method, message, date);
-			logger._log(level, method, message, date);
+			Logger._print(level, method, message, date);
+			Logger._log(level, method, message, date);
 			
 		}
 		
@@ -104,7 +104,7 @@ public class logger {
 
 		public static void error (String level,String method,String message, String date) {
 			
-			logger._print(level, method, message, date);
-			logger._log(level, method, message, date);
+			Logger._print(level, method, message, date);
+			Logger._log(level, method, message, date);
 		}
 }
