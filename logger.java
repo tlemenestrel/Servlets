@@ -16,7 +16,6 @@ import org.json.JSONObject;
 public class logger {
 	
 		 // Declaration of the variables of the constructor 
-	
 		 public String level;
 		 public String date;
 		 public String message;
@@ -37,7 +36,7 @@ public class logger {
 	
 		// Void to insert data into a table 
 		
-		private static void _log (String level,String method,String message, String date) {
+		public static void _log (String level,String method,String message, String date) {
 			
 			try {
 				
@@ -54,7 +53,6 @@ public class logger {
 				Connection conn = DriverManager.getConnection(url, username, databasePassword);
 				System.out.println("Database connected");
 
-				 
 				//String for the statement
 				
 			    String sql = "INSERT INTO logs (date, method, level, message)" +
@@ -79,7 +77,7 @@ public class logger {
 			
 			catch (Exception e) {
 				
-				System.out.println(e);
+				System.out.println("Error with the method _log in the logger class");
 				
 			}
 			
@@ -87,7 +85,7 @@ public class logger {
 		
 		// Method to print in the console when someone logs in
 		
-		private static void _print (String level,String method,String message, String date) {
+		public static void _print (String level,String method,String message, String date) {
 
 			System.out.format("[%s]\t%s\t%s", level, method, message, date);
 			
